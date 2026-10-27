@@ -1,0 +1,280 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import "tailwindcss";
+@plugin "daisyui";
+
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #fff;
+  background: #111416;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: Outfit;
+}
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.asset-pill {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  gap: 10px;
+  border-radius: 999px;
+  background: #f2f2f2;
+  padding: 6px 18px 6px 7px;
+  color: #202124;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.asset-carousel {
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.asset-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.asset-pill:hover {
+  transform: translateY(-2px);
+  background: #fff;
+}
+
+.asset-icon {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.invest-asset-card {
+  animation: asset-float 5.5s ease-in-out infinite;
+}
+
+.invest-asset-card-1 {
+  top: 1.5rem;
+  right: -0.25rem;
+}
+
+.invest-asset-card-2 {
+  bottom: 2.5rem;
+  left: -0.25rem;
+  animation-delay: -1.8s;
+}
+
+.invest-asset-card-3 {
+  right: 0.25rem;
+  bottom: 0.5rem;
+  animation-delay: -3.6s;
+}
+
+.invest-chart-line {
+  stroke-dasharray: 620;
+  stroke-dashoffset: 620;
+  animation: chart-draw 2s ease-out 0.2s forwards;
+}
+
+@keyframes asset-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+
+@keyframes chart-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .invest-asset-card,
+  .invest-chart-line {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+.hero-scrim {
+  background:
+    linear-gradient(90deg, rgb(5 8 10 / 82%) 0%, rgb(5 8 10 / 67%) 29%, rgb(5 8 10 / 28%) 54%, rgb(5 8 10 / 8%) 100%),
+    linear-gradient(0deg, rgb(4 7 9 / 50%) 0%, transparent 42%, rgb(4 7 9 / 24%) 100%);
+}
+
+@media (max-width: 640px) {
+  .hero-stage {
+    min-height: 640px;
+  }
+
+  .asset-carousel {
+    width: calc(100% + 2.5rem);
+    margin-inline: -1.25rem;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-inline: 1.25rem;
+    scroll-snap-type: x mandatory;
+  }
+
+  .asset-carousel .asset-pill {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  .hero-image {
+    object-position: 38% center;
+  }
+
+  .hero-scrim {
+    background:
+      linear-gradient(90deg, rgb(5 8 10 / 80%) 0%, rgb(5 8 10 / 62%) 54%, rgb(5 8 10 / 18%) 100%),
+      linear-gradient(0deg, rgb(4 7 9 / 62%) 0%, transparent 55%, rgb(4 7 9 / 35%) 100%);
+  }
+
+}
+
+/* Dashboard theme overrides. The same preference is shared by investor and super admin views. */
+.dashboard-dark {
+  color: #f1f4f5 !important;
+  background-color: #111416 !important;
+  color-scheme: dark;
+}
+
+.dashboard-dark [class~="bg-white"],
+.dashboard-dark [class*="bg-white/"],
+.dashboard-dark [class*="bg-[#fff"],
+.dashboard-dark [class*="bg-[#f5f7f6]"],
+.dashboard-dark [class*="bg-[#f7f8f7]"],
+.dashboard-dark [class*="bg-[#f8faf8]"],
+.dashboard-dark [class*="bg-[#fafbfa]"],
+.dashboard-dark [class*="bg-[#f1f3f5]"],
+.dashboard-dark [class*="bg-[#f2f4f3]"] {
+  background-color: #1b2023 !important;
+}
+
+.dashboard-dark [class*="bg-[#fff0f0]"],
+.dashboard-dark [class*="bg-[#fff6f6]"] { background-color: #3a2022 !important; }
+.dashboard-dark [class*="bg-[#fff5e8]"],
+.dashboard-dark [class*="bg-[#fff4e5]"] { background-color: #33291b !important; }
+.dashboard-dark [class*="bg-[#eaf7ec]"],
+.dashboard-dark [class*="bg-[#f1f7f2]"],
+.dashboard-dark [class*="bg-[#f1faf3]"] { background-color: #1b3022 !important; }
+.dashboard-dark [class*="bg-[#eef3ff]"] { background-color: #202a3d !important; }
+
+.dashboard-dark [class*="text-[#15191c]"],
+.dashboard-dark [class*="text-[#171c1f]"],
+.dashboard-dark [class*="text-[#20262a]"],
+.dashboard-dark [class*="text-[#252d31]"],
+.dashboard-dark [class*="text-[#273036]"],
+.dashboard-dark [class*="text-[#283036]"],
+.dashboard-dark [class*="text-[#313a40]"],
+.dashboard-dark [class*="text-[#384147]"],
+.dashboard-dark [class*="text-[#465058]"],
+.dashboard-dark [class*="text-[#505a60]"],
+.dashboard-dark [class*="text-[#586168]"],
+.dashboard-dark [class*="text-[#687179]"],
+.dashboard-dark [class*="text-[#69736d]"],
+.dashboard-dark [class*="text-[#727b82]"],
+.dashboard-dark [class*="text-[#748087]"],
+.dashboard-dark [class*="text-[#7b858b]"],
+.dashboard-dark [class*="text-[#7c858b]"],
+.dashboard-dark [class*="text-[#818b91]"],
+.dashboard-dark [class*="text-[#838b91]"],
+.dashboard-dark [class*="text-[#858e94]"],
+.dashboard-dark [class*="text-[#8a9298]"],
+.dashboard-dark [class*="text-[#899197]"],
+.dashboard-dark [class*="text-[#899198]"],
+.dashboard-dark [class*="text-[#92999e]"],
+.dashboard-dark [class*="text-[#9aa39e]"] {
+  color: #b3bdc3 !important;
+}
+
+.dashboard-dark [class*="text-[#15191c]"],
+.dashboard-dark [class*="text-[#171c1f]"],
+.dashboard-dark [class*="text-[#20262a]"],
+.dashboard-dark [class*="text-[#252d31]"],
+.dashboard-dark [class*="text-[#273036]"],
+.dashboard-dark [class*="text-[#283036]"],
+.dashboard-dark [class*="text-[#313a40]"],
+.dashboard-dark [class*="text-[#384147]"] {
+  color: #eef2f4 !important;
+}
+
+.dashboard-dark [class*="text-[#16852d]"],
+.dashboard-dark [class*="text-[#159b42]"],
+.dashboard-dark [class*="text-[#168d2a]"] { color: #69dc7c !important; }
+.dashboard-dark [class*="text-[#d80f18]"],
+.dashboard-dark [class*="text-[#b4232d]"] { color: #ff7379 !important; }
+.dashboard-dark [class*="text-[#9a6518]"],
+.dashboard-dark [class*="text-[#c58219]"] { color: #f0bd69 !important; }
+
+.dashboard-dark [class*="border-[#e7ebe9]"],
+.dashboard-dark [class*="border-[#e9edeb]"],
+.dashboard-dark [class*="border-[#edf0ef]"],
+.dashboard-dark [class*="border-[#edf0f1]"],
+.dashboard-dark [class*="border-[#e5e9e7]"],
+.dashboard-dark [class*="border-[#dfe4e6]"],
+.dashboard-dark [class*="border-[#dfe5e2]"],
+.dashboard-dark [class*="border-[#e8ece9]"],
+.dashboard-dark [class*="border-[#dbe7dd]"],
+.dashboard-dark [class*="border-[#f0f2f1]"],
+.dashboard-dark [class*="border-[#f0d6d8]"] {
+  border-color: #343c41 !important;
+}
+
+.dashboard-dark input,
+.dashboard-dark select,
+.dashboard-dark textarea {
+  color: #eef2f4;
+  color-scheme: dark;
+}
+
+.dashboard-dark input::placeholder,
+.dashboard-dark textarea::placeholder { color: #89949b; }
+
+.dashboard-dark table thead { background-color: #202629 !important; }
+.dashboard-dark table tbody tr { background-color: #1b2023; }
+.dashboard-dark table tbody tr:hover { background-color: #22292d; }
+.dashboard-dark .tradingview-widget-container iframe { color-scheme: dark; }
+
+/* Keep payment destination details readable and distinct in the dashboard's dark theme. */
+.dashboard-dark .payment-instructions-card {
+  border-color: #304438 !important;
+  background: linear-gradient(145deg, #19231d 0%, #171d1b 100%) !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 3%);
+}
+
+.dashboard-dark .payment-instructions-detail {
+  border-color: #35413a !important;
+  background-color: #222a26 !important;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 12%);
+}
+
+.dashboard-dark .payment-instructions-alert {
+  border-color: #634b2c !important;
+  background-color: #30281d !important;
+  color: #f0c782 !important;
+}
