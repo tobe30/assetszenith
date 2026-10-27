@@ -18,6 +18,7 @@ const app = express();
 app.use(cors({
       origin:[ 
         'http://localhost:5173',
+        'https://assetszenith.vercel.app'
     ], // your frontend URL
 
     credentials: true,
