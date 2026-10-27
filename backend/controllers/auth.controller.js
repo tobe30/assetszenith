@@ -38,13 +38,25 @@ const sendTwoFactorCode = async (user, code, purpose) => {
 
 const setLoginCookie = (res, user) => {
     const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET_KEY, { expiresIn: "7d" });
-    res.cookie("jwt", token, {
+    res.cookie("jwt", token, authCookieOptions());
+};
+
+const authCookieOptions = () => {
+    const isProduction = process.env.NODE_ENV === "production";
+    const sameSite = process.env.COOKIE_SAME_SITE || (isProduction ? "none" : "strict");
+    return {
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: "strict",
-        secure: process.env.NODE_ENV === "production",
+        sameSite,
+        secure: isProduction || sameSite === "none",
         path: "/",
-    });
+    };
+};
+
+const clearAuthCookieOptions = () => {
+    const options = authCookieOptions();
+    delete options.maxAge;
+    return options;
 };
 
 const maskedEmail = (email) => {
@@ -150,16 +162,8 @@ export const Register = async (req, res) => {
 
     // toJSON on the User schema removes passwordHash before the response is sent.
 
-    const token = jwt.sign({userId:newUser._id},process.env.JWT_SECRET_KEY, {
-            expiresIn: "7d"
-        })
-
-        res.cookie("jwt",token,{
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-            httpOnly: true, // prevent xss attacks
-            sameSite: "strict",//prevent CSRF attacks
-            secure: process.env.NODE_ENV=== "production"
-        })
+    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET_KEY, { expiresIn: "7d" });
+    res.cookie("jwt", token, authCookieOptions());
 
     return res.status(201).json({
       success: true,
@@ -436,12 +440,7 @@ export async function disableTwoFactor(req, res) {
 }
 
 export function logout(_req, res) {
-    res.clearCookie("jwt", {
-        httpOnly: true,
-        sameSite: "strict",
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-    });
+    res.clearCookie("jwt", clearAuthCookieOptions());
     return res.status(200).json({ success: true, message: "Logout successful." });
 }
 

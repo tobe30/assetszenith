@@ -16,11 +16,10 @@ import adminRoutes from "./routes/admin.route.js";
 const app = express();
 
 app.use(cors({
-      origin:[ 
-        'http://localhost:5173',
-        'https://assetszenith.vercel.app'
-    ], // your frontend URL
-
+    origin: [
+      'http://localhost:5173',
+      'https://assetszenith.vercel.app',
+    ],
     credentials: true,
 }));
 app.use(express.json());
