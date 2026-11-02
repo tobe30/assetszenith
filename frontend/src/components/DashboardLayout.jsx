@@ -3,7 +3,6 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
   Activity,
-  Bell,
   ChevronDown,
   CircleHelp,
   FileClock,
@@ -70,16 +69,6 @@ const navigationGroups = [
   //   { label: 'View signals', path: '/dashboard/signals', icon: Activity },
   //   { label: 'Signal subscriptions', path: '/dashboard/signals/subscribe', icon: FileText },
   // ] },
-]
-
-const accountNotifications = [
-  { id: 1, title: 'Market data is ready', description: 'The latest available quotes have loaded.', time: 'Recently', unread: true },
-  { id: 2, title: 'Welcome to your investment account', description: 'Your Assets Zenith account is ready.', time: 'Today', unread: true },
-]
-
-const adminModeNotifications = [
-  { id: 1, title: 'Deposit requests need review', description: 'Review incoming payment requests in the management area.', time: 'Recently', unread: true },
-  { id: 2, title: 'Withdrawal requests need review', description: 'Check payout requests before approving them.', time: 'Today', unread: true },
 ]
 
 const pageTitles = {
@@ -218,7 +207,6 @@ const SidebarContent = ({ onNavigate, adminMode = false }) => {
 const DashboardLayout = ({ adminMode = false }) => {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
-  const [notifOpen, setNotifOpen] = useState(false)
   const [logoutError, setLogoutError] = useState('')
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [search, setSearch] = useState('')
@@ -228,8 +216,6 @@ const DashboardLayout = ({ adminMode = false }) => {
   const navigate = useNavigate()
   const location = useLocation()
   const queryClient = useQueryClient()
-  const activeNotifications = adminMode ? adminModeNotifications : accountNotifications
-  const unreadCount = activeNotifications.filter(({ unread }) => unread).length
   const toggleTheme = () => setDarkMode((current) => {
     const next = !current
     try { window.localStorage.setItem('assets-zenith-dashboard-theme', next ? 'dark' : 'light') } catch { /* Keep the theme for this session if storage is unavailable. */ }
@@ -306,6 +292,7 @@ const DashboardLayout = ({ adminMode = false }) => {
 
               <button aria-label={`Switch to ${darkMode ? 'light' : 'dark'} mode`} className="flex h-10 w-10 items-center justify-center rounded-xl text-[#687179] transition hover:bg-[#f5f7f6] hover:text-[#15191c]" onClick={toggleTheme} title={`Switch to ${darkMode ? 'light' : 'dark'} mode`} type="button">{darkMode ? <Sun aria-hidden="true" className="h-[18px] w-[18px]" /> : <Moon aria-hidden="true" className="h-[18px] w-[18px]" />}</button>
 
+              {/* Notification control temporarily hidden. Restore this block when notifications are ready.
               <div className="relative">
                 <button
                   aria-expanded={notifOpen}
@@ -342,6 +329,7 @@ const DashboardLayout = ({ adminMode = false }) => {
                   </div>
                 )}
               </div>
+              */}
 
               <div aria-hidden="true" className="mx-0.5 hidden h-8 w-px bg-[#e9edeb] sm:block" />
 
@@ -350,7 +338,7 @@ const DashboardLayout = ({ adminMode = false }) => {
                   aria-expanded={profileOpen}
                   aria-label="Open account menu"
                   className="flex h-10 items-center gap-2 rounded-xl px-1.5 transition hover:bg-[#f5f7f6] sm:gap-2.5 sm:px-2"
-                  onClick={() => { setProfileOpen((open) => !open); setNotifOpen(false) }}
+                  onClick={() => setProfileOpen((open) => !open)}
                   type="button"
                 >
                   <span aria-hidden="true" className="flex h-8 w-8 items-center justify-center rounded-full bg-[#171b1e] text-xs font-semibold text-white">AZ</span>

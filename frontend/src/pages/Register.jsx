@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import AuthLayout from '../components/AuthLayout'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { signup } from '../lib/api'
+import { countries } from '../data/countries'
 
 const inputClass = 'mt-2 h-12 w-full rounded-xl border border-[#dfe2e4] bg-white px-4 font-normal outline-none transition focus:border-[#1caf35] focus:ring-4 focus:ring-[#1caf35]/10'
 
@@ -85,7 +86,10 @@ const Register = () => {
           </label>
           <label className="block text-sm font-semibold" htmlFor="country">
             Country
-            <input autoComplete="country-name" className={inputClass} id="country" name="country" placeholder="Your country" required />
+            <select autoComplete="country-name" className={inputClass} defaultValue="" id="country" name="country" required>
+              <option disabled value="">Select your country</option>
+              {countries.map((country) => <option key={country} value={country}>{country}</option>)}
+            </select>
           </label>
         </div>
 
