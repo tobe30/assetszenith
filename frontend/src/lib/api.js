@@ -129,6 +129,7 @@ export const reviewAdminWithdrawal = async ({ transactionId, decision, reviewNot
 
 export const logout = async ()=> {
     const response = await axiosInstance.post("/auth/logout");
+    window.localStorage.removeItem('token')
     return response.data;
 };
 

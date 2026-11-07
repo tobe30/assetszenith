@@ -18,6 +18,7 @@ const Register = () => {
   const { mutate: registerUser, isPending, error } = useMutation({
     mutationFn: signup,
     onSuccess: (data) => {
+      if (data.token) window.localStorage.setItem('token', data.token)
       queryClient.setQueryData(['authUser'], data.user)
       navigate(data.user?.role === 'admin' ? '/admin' : '/dashboard', { replace: true })
     }

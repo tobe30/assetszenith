@@ -39,6 +39,7 @@ const sendTwoFactorCode = async (user, code, purpose) => {
 const setLoginCookie = (res, user) => {
     const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET_KEY, { expiresIn: "7d" });
     res.cookie("jwt", token, authCookieOptions());
+    return token;
 };
 
 const authCookieOptions = () => {
@@ -162,13 +163,14 @@ export const Register = async (req, res) => {
 
     // toJSON on the User schema removes passwordHash before the response is sent.
 
-    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET_KEY, { expiresIn: "7d" });
+    const token = jwt.sign({ userId: newUser._id, role: newUser.role }, process.env.JWT_SECRET_KEY, { expiresIn: "7d" });
     res.cookie("jwt", token, authCookieOptions());
 
     return res.status(201).json({
       success: true,
       message: "Your account has been created successfully.",
       user: newUser.toJSON(),
+      token,
     });
   } catch (error) {
     console.log("Error in signup controller", error);
@@ -226,8 +228,8 @@ export async function login(req, res) {
 
         user.lastLoginAt = new Date();
         await user.save();
-        setLoginCookie(res, user);
-        return res.status(200).json({ success: true, user: user.toJSON() });
+        const token = setLoginCookie(res, user);
+        return res.status(200).json({ success: true, user: user.toJSON(), token });
     } catch (error) {
         console.error("Error in login controller:", error);
         return res.status(500).json({ message: "Unable to log in right now. Please try again later." });
@@ -272,8 +274,8 @@ export async function verifyTwoFactorLogin(req, res) {
         clearLoginCode(user);
         user.lastLoginAt = new Date();
         await user.save();
-        setLoginCookie(res, user);
-        return res.status(200).json({ success: true, user: user.toJSON() });
+        const token = setLoginCookie(res, user);
+        return res.status(200).json({ success: true, user: user.toJSON(), token });
     } catch (error) {
         console.error("Two-factor login verification error:", error);
         return res.status(500).json({ success: false, message: "Unable to verify your code right now. Please try again." });

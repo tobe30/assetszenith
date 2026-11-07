@@ -20,6 +20,7 @@ const Login = () => {
         setChallenge(data)
         return
       }
+      if (data.token) window.localStorage.setItem('token', data.token)
       queryClient.setQueryData(['authUser'], data.user)
       navigate(data.user?.role === 'admin' ? '/admin' : '/dashboard', { replace: true })
     },
@@ -28,6 +29,7 @@ const Login = () => {
   const { mutate: verifyCode, isPending: isVerifying, error: verificationError } = useMutation({
     mutationFn: verifyTwoFactorLogin,
     onSuccess: (data) => {
+      if (data.token) window.localStorage.setItem('token', data.token)
       queryClient.setQueryData(['authUser'], data.user)
       navigate(data.user?.role === 'admin' ? '/admin' : '/dashboard', { replace: true })
     },

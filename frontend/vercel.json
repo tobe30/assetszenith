@@ -1,30 +1,6 @@
   {
     "rewrites": [
       {
-        "source": "/api/auth/:path*",
-        "destination": "https://assetszenith-q8y1.vercel.app/api/auth/:path*"
-      },
-      {
-        "source": "/api/users/:path*",
-        "destination": "https://assetszenith-q8y1.vercel.app/api/users/:path*"
-      },
-      {
-        "source": "/api/transactions/:path*",
-        "destination": "https://assetszenith-q8y1.vercel.app/api/transactions/:path*"
-      },
-      {
-        "source": "/api/investments/:path*",
-        "destination": "https://assetszenith-q8y1.vercel.app/api/investments/:path*"
-      },
-      {
-        "source": "/api/wallet/:path*",
-        "destination": "https://assetszenith-q8y1.vercel.app/api/wallet/:path*"
-      },
-      {
-        "source": "/api/admin/:path*",
-        "destination": "https://assetszenith-q8y1.vercel.app/api/admin/:path*"
-      },
-      {
         "source": "/(.*)",
         "destination": "/"
       }
