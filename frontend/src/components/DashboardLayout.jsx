@@ -26,6 +26,7 @@ import {
   X,
 } from 'lucide-react'
 import DashboardThemeContext from './DashboardThemeContext'
+import { logout } from '../lib/api'
 
 const navigation = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
@@ -233,8 +234,7 @@ const DashboardLayout = ({ adminMode = false }) => {
     setIsLoggingOut(true)
     setLogoutError('')
     try {
-      const response = await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
-      if (!response.ok) throw new Error('Logout failed')
+      await logout()
       queryClient.setQueryData(['authUser'], null)
       navigate('/login')
     } catch {
