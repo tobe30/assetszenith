@@ -61,7 +61,9 @@ export const getAdminUsers = async (req, res) => {
     const page = Number.isInteger(pageValue) && pageValue > 0 ? pageValue : 1;
     const limit = Number.isInteger(limitValue) && limitValue > 0 ? Math.min(limitValue, 100) : 20;
     const search = typeof req.query.search === "string" ? req.query.search.trim().slice(0, 100) : "";
-    const filter = { role: "user" };
+    // Closed accounts are removed from the active users list, while their
+    // financial history remains available through transaction records.
+    const filter = { role: "user", status: { $ne: "closed" } };
 
     if (search) {
       const safeSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -108,6 +110,116 @@ export const getAdminUsers = async (req, res) => {
   } catch (error) {
     console.error("Error loading admin users:", error);
     return res.status(500).json({ success: false, message: "Unable to load users right now." });
+  }
+};
+
+export const getAdminUserDetails = async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.userId)) {
+    return res.status(400).json({ success: false, message: "Invalid user ID." });
+  }
+
+  try {
+    const user = await User.findOne({ _id: req.params.userId, role: "user" })
+      .select("firstName lastName username email phone country state profilePhotoUrl currency status createdAt updatedAt lastLoginAt emailVerifiedAt twoFactorEnabled verificationStatus verificationIdType verificationSubmittedAt verificationReviewedAt verificationReviewNote")
+      .lean();
+
+    if (!user) return res.status(404).json({ success: false, message: "User account not found." });
+
+    const [wallet, investments, transactions] = await Promise.all([
+      Wallet.findOne({ user: user._id }).select("currency walletBalance reservedBalance portfolioBalance totalBonus totalWithdrawals updatedAt").lean(),
+      Investment.find({ user: user._id }).sort({ createdAt: -1 }).limit(10).lean(),
+      Transaction.find({ user: user._id })
+        .select("type amount currency paymentMethod paymentStatus reference description status reviewNote createdAt reviewedAt adjustmentTarget")
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .lean(),
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      user: {
+        ...user,
+        wallet: wallet || {
+          currency: user.currency,
+          walletBalance: 0,
+          reservedBalance: 0,
+          portfolioBalance: 0,
+          totalBonus: 0,
+          totalWithdrawals: 0,
+        },
+        investments,
+        transactions,
+      },
+    });
+  } catch (error) {
+    console.error("Error loading admin user details:", error);
+    return res.status(500).json({ success: false, message: "Unable to load this user's details right now." });
+  }
+};
+
+export const updateAdminUserStatus = async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.userId)) {
+    return res.status(400).json({ success: false, message: "Invalid user ID." });
+  }
+
+  const { status } = req.body || {};
+  if (!["active", "suspended"].includes(status)) {
+    return res.status(400).json({ success: false, message: "Choose active or suspended status." });
+  }
+
+  try {
+    const user = await User.findOneAndUpdate(
+      { _id: req.params.userId, role: "user", status: { $ne: "closed" } },
+      { $set: { status } },
+      { new: true, runValidators: true },
+    ).select("_id firstName lastName email status");
+
+    if (!user) return res.status(404).json({ success: false, message: "Open user account not found." });
+
+    await emailUserNotification(user._id, {
+      subject: status === "suspended" ? "Account access paused · Assets Zenith" : "Account access restored · Assets Zenith",
+      heading: status === "suspended" ? "Your account has been suspended" : "Your account is active again",
+      message: status === "suspended"
+        ? "An administrator has temporarily paused access to your account. Please contact support if you need help."
+        : "An administrator has restored access to your account. You can sign in again.",
+      details: [["Account status", status]],
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: status === "suspended" ? "User account suspended." : "User account reactivated.",
+      user,
+    });
+  } catch (error) {
+    console.error("Error updating admin user status:", error);
+    return res.status(500).json({ success: false, message: "Unable to update this user's status right now." });
+  }
+};
+
+export const closeAdminUser = async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.userId)) {
+    return res.status(400).json({ success: false, message: "Invalid user ID." });
+  }
+
+  try {
+    const user = await User.findOneAndUpdate(
+      { _id: req.params.userId, role: "user", status: { $ne: "closed" } },
+      { $set: { status: "closed" } },
+      { new: true, runValidators: true },
+    ).select("_id firstName lastName email status");
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "Active user account not found." });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Access closed for ${user.firstName} ${user.lastName}. Wallet and transaction history were retained.`,
+      user,
+    });
+  } catch (error) {
+    console.error("Error closing user account:", error);
+    return res.status(500).json({ success: false, message: "Unable to close this user account right now." });
   }
 };
 

@@ -18,6 +18,7 @@ import AdminTransactions from './pages/admin/Transactions'
 import AdminUsers from './pages/admin/UserBalances'
 import DepositApprovals from './pages/admin/DepositApprovals'
 import WithdrawalApprovals from './pages/admin/WithdrawalApprovals'
+import IdentityVerificationApprovals from './pages/admin/IdentityVerificationApprovals'
 import ChangePassword from './pages/dashboard/ChangePassword'
 import Dashboard from './pages/dashboard/Dashboard'
 import Deposit from './pages/dashboard/Deposit'
@@ -65,6 +66,7 @@ const App = () => {
           <Route path="users" element={<AdminUsers />} />
           <Route path="deposits" element={<DepositApprovals />} />
           <Route path="withdrawals" element={<WithdrawalApprovals />} />
+          <Route path="verifications" element={<IdentityVerificationApprovals />} />
           <Route path="transactions" element={<AdminTransactions />} />
           <Route path="profile" element={<AdminProfile />} />
           <Route path="settings" element={<AdminSettings />} />

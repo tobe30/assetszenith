@@ -21,6 +21,10 @@ export const protectRoute = async (req, res, next)=>{
             return res.status(401).json({ message: "Unauthorized - User not found"});
         }
 
+        if (user.status !== "active") {
+            return res.status(403).json({ message: "This account is not currently active." });
+        }
+
         req.user = user;
         next()
     } catch (error) {

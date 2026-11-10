@@ -61,6 +61,41 @@ export const getAdminUsers = async ({ search = '', page = 1, limit = 20 } = {}) 
     return response.data;
 };
 
+export const getAdminUserDetails = async (userId) => {
+    const response = await axiosInstance.get(`/admin/users/${userId}`);
+    return response.data.user;
+};
+
+export const updateAdminUserStatus = async ({ userId, status }) => {
+    const response = await axiosInstance.patch(`/admin/users/${userId}/status`, { status });
+    return response.data;
+};
+
+export const deleteAdminUser = async (userId) => {
+    const response = await axiosInstance.delete(`/admin/users/${userId}`);
+    return response.data;
+};
+
+export const getMyVerification = async () => {
+    const response = await axiosInstance.get("/users/verification");
+    return response.data.verification;
+};
+
+export const submitIdentityVerification = async (verificationData) => {
+    const response = await axiosInstance.post("/users/verification", verificationData);
+    return response.data;
+};
+
+export const getPendingIdentityVerifications = async () => {
+    const response = await axiosInstance.get("/admin/verifications/pending");
+    return response.data;
+};
+
+export const reviewIdentityVerification = async ({ userId, decision, reviewNote = '' }) => {
+    const response = await axiosInstance.patch(`/admin/verifications/${userId}/${decision}`, { reviewNote });
+    return response.data;
+};
+
 export const getAdminDashboardSummary = async () => {
     const response = await axiosInstance.get("/admin/dashboard-summary");
     return response.data;
